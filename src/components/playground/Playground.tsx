@@ -3,6 +3,7 @@ import { Image, Layer, Rect, Stage } from "react-konva";
 
 const STAGE_WIDTH = 640;
 const STAGE_HEIGHT = 360;
+const VERTEX_EDGE_LENGTH = 4;
 
 interface CanvasRect {
   x: number;
@@ -11,11 +12,17 @@ interface CanvasRect {
   height: number;
 }
 
+interface Position {
+  x: number;
+  y: number;
+}
+
 const Playground = (): JSX.Element => {
   const [image, setImage] = useState<HTMLImageElement>();
 
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [area, setArea] = useState<CanvasRect | undefined>();
+  const [vertices, setVertices] = useState<Position[] | undefined>();
 
   useEffect(() => {
     const imageToLoad = new window.Image();
@@ -23,6 +30,19 @@ const Playground = (): JSX.Element => {
       "https://images.bemz.com/_images/6bf08969-46ec-44d7-a5fc-920bb2949139/ikea-nockeby-simplyvelvet-ivygreen-bemz.jpg";
     setImage(imageToLoad);
   }, []);
+
+  useEffect(() => {
+    if (area?.height && area?.width) {
+      const { x, y, height, width } = area;
+      const vertices: Position[] = [
+        { x: x, y: y },
+        { x: x + width, y: y },
+        { x: x + width, y: y + height },
+        { x: x, y: y + height },
+      ];
+      setVertices(vertices);
+    }
+  }, [area]);
 
   const handleMouseDown = (e) => {
     if (!area) {
@@ -65,6 +85,18 @@ const Playground = (): JSX.Element => {
             strokeWidth={3}
           />
         )}
+        {vertices?.map(({ x: vertexX, y: vertexY }) => (
+          <Rect
+            x={vertexX}
+            y={vertexY}
+            offsetX={VERTEX_EDGE_LENGTH / 2}
+            offsetY={VERTEX_EDGE_LENGTH / 2}
+            width={VERTEX_EDGE_LENGTH}
+            height={VERTEX_EDGE_LENGTH}
+            stroke="blue"
+            fill="blue"
+          />
+        ))}
       </Layer>
     </Stage>
   );
