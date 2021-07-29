@@ -1,72 +1,23 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { Image, Layer, Stage } from "react-konva";
 
-import { Stage, Layer, Star, Text } from "react-konva";
-
-const generateShapes = () => {
-  return [...Array(10)].map((_, i) => ({
-    id: i.toString(),
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    rotation: Math.random() * 180,
-    isDragging: false,
-  }));
-};
-
-const INITIAL_STATE = generateShapes();
+const STAGE_WIDTH = 640;
+const STAGE_HEIGHT = 360;
 
 const Playground = (): JSX.Element => {
-  const [stars, setStars] = React.useState(INITIAL_STATE);
+  const [image, setImage] = useState<HTMLImageElement>();
 
-  const handleDragStart = (e) => {
-    const id = e.target.id();
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: star.id === id,
-        };
-      })
-    );
-  };
-  const handleDragEnd = (e) => {
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: false,
-        };
-      })
-    );
-  };
+  useEffect(() => {
+    const imageToLoad = new window.Image();
+    imageToLoad.src =
+      "https://images.bemz.com/_images/6bf08969-46ec-44d7-a5fc-920bb2949139/ikea-nockeby-simplyvelvet-ivygreen-bemz.jpg";
+    setImage(imageToLoad);
+  }, []);
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
+    <Stage width={STAGE_WIDTH} height={STAGE_HEIGHT}>
       <Layer>
-        <Text text="Try to drag a star" />
-        {stars.map((star) => (
-          <Star
-            key={star.id}
-            id={star.id}
-            x={star.x}
-            y={star.y}
-            numPoints={5}
-            innerRadius={20}
-            outerRadius={40}
-            fill="#89b717"
-            opacity={0.8}
-            draggable
-            rotation={star.rotation}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
-            shadowOffsetX={star.isDragging ? 10 : 5}
-            shadowOffsetY={star.isDragging ? 10 : 5}
-            scaleX={star.isDragging ? 1.2 : 1}
-            scaleY={star.isDragging ? 1.2 : 1}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          />
-        ))}
+        <Image image={image} width={STAGE_WIDTH} height={STAGE_HEIGHT} />
       </Layer>
     </Stage>
   );
