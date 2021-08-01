@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Image, Layer, Rect, Stage } from "react-konva";
+import { Html } from "react-konva-utils";
 
 const STAGE_WIDTH = 640;
 const STAGE_HEIGHT = 360;
@@ -140,6 +141,32 @@ const Playground = (): JSX.Element => {
             onDragMove={handleVertexDrag(index)}
           />
         ))}
+        {area && (
+          <Html
+            divProps={{
+              style: {
+                position: "absolute",
+              },
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: area.x - 30,
+                top: area.y,
+                width: 20,
+                height: 20,
+                backgroundColor: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+              }}
+            >
+              X
+            </div>
+          </Html>
+        )}
       </Layer>
     </Stage>
   );
