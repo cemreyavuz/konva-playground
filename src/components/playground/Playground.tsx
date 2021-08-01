@@ -65,6 +65,46 @@ const Playground = (): JSX.Element => {
     setIsMouseDown(false);
   };
 
+  const handleVertexDrag = (index) => (e) => {
+    // 0 = top left, 1 = top right, 2 = bottom right, 3 = bottom left
+    const stage = e.target.getStage();
+    const { x: curX, y: curY } = stage.getPointerPosition(e);
+    setVertices((prevVertices) => {
+      const updatedVertices = [...prevVertices];
+      updatedVertices[index] = { x: curX, y: curY };
+
+      switch (index) {
+        case 0:
+          updatedVertices[1].y = curY;
+          updatedVertices[3].x = curX;
+          break;
+        case 1:
+          updatedVertices[0].y = curY;
+          updatedVertices[2].x = curX;
+          break;
+        case 2:
+          updatedVertices[1].x = curX;
+          updatedVertices[3].y = curY;
+          break;
+        case 3:
+          updatedVertices[0].x = curX;
+          updatedVertices[2].y = curY;
+          break;
+        default:
+          break;
+      }
+
+      setArea({
+        x: updatedVertices[0].x,
+        y: updatedVertices[0].y,
+        width: updatedVertices[1].x - updatedVertices[0].x,
+        height: updatedVertices[3].y - updatedVertices[0].y,
+      });
+
+      return updatedVertices;
+    });
+  };
+
   return (
     <Stage
       height={STAGE_HEIGHT}
@@ -81,11 +121,12 @@ const Playground = (): JSX.Element => {
             y={area.y}
             width={area.width}
             height={area.height}
-            stroke="red"
-            strokeWidth={3}
+            stroke="#ff5722"
+            strokeWidth={1}
+            fill="rgb(255 87 34 / 30%)"
           />
         )}
-        {vertices?.map(({ x: vertexX, y: vertexY }) => (
+        {vertices?.map(({ x: vertexX, y: vertexY }, index) => (
           <Rect
             x={vertexX}
             y={vertexY}
@@ -93,8 +134,10 @@ const Playground = (): JSX.Element => {
             offsetY={VERTEX_EDGE_LENGTH / 2}
             width={VERTEX_EDGE_LENGTH}
             height={VERTEX_EDGE_LENGTH}
-            stroke="blue"
-            fill="blue"
+            stroke="#673ab7"
+            fill="#673ab7"
+            draggable
+            onDragMove={handleVertexDrag(index)}
           />
         ))}
       </Layer>
